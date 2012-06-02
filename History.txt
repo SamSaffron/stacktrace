@@ -1,0 +1,5 @@
+=== 1.0.0 / 2012-06-01
+
+* Initial version of stacktrace, only compatible with 1.9.3 for now
+
+
