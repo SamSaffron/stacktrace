@@ -1,6 +1,6 @@
 = stacktrace
 
-* FIX (url)
+* https://github.com/SamSaffron/stacktrace
 
 == DESCRIPTION:
 
@@ -15,11 +15,15 @@ I think it only works on 1.9.3 for now, need to test
 Thread.current.stacktrace 
 stacktrace 
 
+In a simple bench it is about 3 times faster than caller due to reduced information it is reporting. 
+
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* Ruby 1.9.3 
 
 == INSTALL:
+
+- TODO
 
 == DEVELOPERS:
 
