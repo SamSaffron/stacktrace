@@ -19,13 +19,11 @@ In a simple bench it is about 3 times faster than caller due to reduced informat
 
 == REQUIREMENTS:
 
-* Ruby 1.9.3 
-
-== INSTALL:
-
-- TODO
+* Ruby 1.9.3
 
 == DEVELOPERS:
+
+Sam Saffron
 
 After checking out the source, run:
 
