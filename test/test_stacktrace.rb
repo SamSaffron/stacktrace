@@ -31,6 +31,13 @@ class TestStacktrace < Test::Unit::TestCase
     assert_equal frame[:method], "test_thread_stacktrace"
   end
 
+  def test_c_func
+    frame = nil
+    [1].map{frame = stacktrace[0]}
+    assert_equal frame[:method], "map"
+    assert_equal frame[:klass], Array
+  end
+
   # stacktrace is MUCH faster
   #def test_demo_bench
   #  Benchmark.bm(7) do |b|
