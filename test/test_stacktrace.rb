@@ -20,20 +20,21 @@ class TestStacktrace < Test::Unit::TestCase
   end
 
   def test_singleton_stacktrace
-    frame = TestStacktrace.test_singleton[0]
+    frame = TestStacktrace.test_singleton[1]
     assert_equal frame[:klass], TestStacktrace.metaclass 
     assert_equal frame[:method], "test_singleton" 
   end
   
   def test_thread_stacktrace
-    frame = Thread.current.stacktrace[0]
+    frame = Thread.current.stacktrace[1]
     assert_equal frame[:klass], TestStacktrace
     assert_equal frame[:method], "test_thread_stacktrace"
   end
 
   def test_c_func
     frame = nil
-    [1].map{frame = stacktrace[0]}
+    [1].map{frame = stacktrace[1]}
+    
     assert_equal frame[:method], "map"
     assert_equal frame[:klass], Array
   end

@@ -31,6 +31,24 @@ static VALUE stacktrace(rb_thread_t *th)
           }
 	      }
 	  }
+    else if (RUBYVM_CFUNC_FRAME_P(cfp)) {
+         ID id;
+         extern VALUE ruby_engine_name;
+ 
+         //if (NIL_P(file)) file = ruby_engine_name;
+         if (cfp->me->def)
+           id = cfp->me->def->original_id;
+         else
+           id = cfp->me->called_id;
+         if (id != ID_ALLOCATOR) {
+
+            VALUE hash = rb_hash_new();
+            rb_hash_aset(hash, ID2SYM(rb_intern("klass")), cfp->me->klass); 
+            rb_hash_aset(hash, ID2SYM(rb_intern("method")), rb_id2str(id)); 
+            rb_ary_push(ary,hash);
+           
+         } 
+    }
 	  
 	  cfp = RUBY_VM_NEXT_CONTROL_FRAME(cfp);
   }
