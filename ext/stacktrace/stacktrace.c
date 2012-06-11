@@ -15,9 +15,8 @@ static VALUE stacktrace(int argc, VALUE* argv, rb_thread_t *th)
   int start = 0;
   int finish = -1;
   int stack_size = 0;
-  const rb_control_frame_t *limit_cfp = th->cfp;
-  const rb_control_frame_t *initial_cfp = th->cfp;
-  const rb_control_frame_t *cfp = (void *)(th->stack + th->stack_size);
+  const rb_control_frame_t *cfp = th->cfp;
+  const rb_control_frame_t *limit_cfp = (void *)(th->stack + th->stack_size);
   VALUE file = Qnil;
   int line = 0;
   
@@ -29,51 +28,34 @@ static VALUE stacktrace(int argc, VALUE* argv, rb_thread_t *th)
     finish = NUM2INT(argv[1]);
   } 
 
-  cfp -= 2;
-  limit_cfp -= 1;
-  stack_size = cfp - initial_cfp;
+  cfp += 1;
+  limit_cfp -= 2;
 
   if (finish < 0) {
     finish += 1;
-    finish = stack_size + finish;
+//    finish = stack_size + finish;
   }
 
   if (start < 0) {
     start += 1; 
-    start = stack_size + start; 
+ //   start = stack_size + start; 
   }
-  
-  
-  //if (cfp > (limit_cfp + finish + 1)) {
-  //   cfp = initial_cfp + finish + 1; 
-  //} else {
-  //  return ary; 
-  //}
-  
-  //if (cfp > limit_cfp + start) {
-   // limit_cfp = initial_cfp + start;
-  //} else {
-  //  return ary;
-  //}
 
+   rb_warn("test %i %i cfp: %i lcfp %i ss %i", start, finish, cfp, limit_cfp, stack_size);
 
-  while (cfp > limit_cfp) {
+  while (cfp < limit_cfp) {
     VALUE hash = 0; 
-	  if (cfp->iseq != 0) {
-	      if (cfp->pc != 0) {
-		      rb_iseq_t *iseq = cfp->iseq;
-          if (cfp->me) {
-            rb_ary_push(ary, cfp->me->klass);
-          } else if (iseq->defined_method_id) {
-            hash = rb_hash_new();
-            line = rb_vm_get_sourceline(cfp);
-            rb_hash_aset(hash, ID2SYM(rb_intern("klass")), iseq->klass); 
-            rb_hash_aset(hash, ID2SYM(rb_intern("method")), iseq->name); 
-            rb_hash_aset(hash, ID2SYM(rb_intern("filename")), iseq->filename); 
-            rb_hash_aset(hash, ID2SYM(rb_intern("linenumber")), INT2FIX(line)); 
-            rb_ary_push(ary,hash);
-          }
-	      }
+	  if (cfp->iseq != 0 && cfp->pc != 0) {
+        rb_iseq_t *iseq = cfp->iseq;
+        hash = rb_hash_new();
+        if (iseq->defined_method_id) {
+          rb_hash_aset(hash, ID2SYM(rb_intern("klass")), iseq->klass); 
+        }
+        rb_hash_aset(hash, ID2SYM(rb_intern("method")), iseq->name); 
+        rb_hash_aset(hash, ID2SYM(rb_intern("filename")), iseq->filename); 
+        line = rb_vm_get_sourceline(cfp);
+        rb_hash_aset(hash, ID2SYM(rb_intern("linenumber")), INT2FIX(line)); 
+        rb_ary_push(ary,hash);
 	  }
     else if (RUBYVM_CFUNC_FRAME_P(cfp)) {
          ID id;
@@ -92,10 +74,9 @@ static VALUE stacktrace(int argc, VALUE* argv, rb_thread_t *th)
            
          } 
     }
-	  
-	  cfp = RUBY_VM_NEXT_CONTROL_FRAME(cfp);
+	  cfp += 1;
   }
-  return rb_ary_reverse(ary);
+  return ary;
 }
 
 static VALUE rb_st_kernel_stacktrace(int argc, VALUE* argv)

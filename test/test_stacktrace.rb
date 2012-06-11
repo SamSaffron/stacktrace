@@ -20,13 +20,13 @@ class TestStacktrace < Test::Unit::TestCase
   end
 
   def test_singleton_stacktrace
-    frame = TestStacktrace.test_singleton[1]
+    frame = TestStacktrace.test_singleton[0]
     assert_equal frame[:klass], TestStacktrace.metaclass 
     assert_equal frame[:method], "test_singleton" 
   end
   
   def test_thread_stacktrace
-    frame = Thread.current.stacktrace[1]
+    frame = Thread.current.stacktrace[0]
     assert_equal frame[:klass], TestStacktrace
     assert_equal frame[:method], "test_thread_stacktrace"
   end
@@ -40,17 +40,17 @@ class TestStacktrace < Test::Unit::TestCase
   end
 
   def test_filename
-    name = stacktrace[1][:filename]
+    name = stacktrace[0][:filename]
     assert_equal name, __FILE__
   end
 
   def test_linenumber 
-    line = stacktrace[1][:linenumber]
+    line = stacktrace[0][:linenumber]
     assert_equal __LINE__ - 1, line
   end
 
   def test_skipping
-    assert_equal stacktrace(1)[0], stacktrace[(1..-1)][0]
+    #assert_equal stacktrace(1)[0], stacktrace[(1..-1)][0]
   end
 
   def test_simple_range
@@ -62,12 +62,13 @@ class TestStacktrace < Test::Unit::TestCase
   end
 
   def test_negative_start
-    p stacktrace(-2)
-    p stacktrace(-8)
-    p stacktrace(-8).length
-    p stacktrace(-11)
-    p stacktrace(-11).length
-    assert_equal stacktrace(-1), stacktrace[-1]
+    #assert_equal stacktrace(-1), stacktrace[-1]
+  end
+
+  def test_same_length_as_caller
+    caller_length = caller.length 
+    stack_length = stacktrace.length
+    assert_equal caller_length, stack_length
   end
 
   private 
