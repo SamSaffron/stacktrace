@@ -50,11 +50,11 @@ class TestStacktrace < Test::Unit::TestCase
   end
 
   def test_skipping
-    #assert_equal stacktrace(1)[0], stacktrace[(1..-1)][0]
+    assert_equal stacktrace(1)[0], stacktrace[(1..-1)][0]
   end
 
   def test_simple_range
-    #assert_equal stacktrace(1,2), stacktrace[(1..2)]
+    assert_equal stacktrace[1..2], stacktrace(1,2)
   end
 
   def test_invalid_range
@@ -62,11 +62,12 @@ class TestStacktrace < Test::Unit::TestCase
   end
 
   def test_negative_start
-    #assert_equal stacktrace(-1), stacktrace[-1]
+    assert_equal stacktrace(-1), [stacktrace[-1]]
   end
 
   def test_same_length_as_caller
-    caller_length = caller.length 
+    # caller skips 1 by default
+    caller_length = caller(0).length 
     stack_length = stacktrace.length
     assert_equal caller_length, stack_length
   end
