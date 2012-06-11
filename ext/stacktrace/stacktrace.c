@@ -34,9 +34,8 @@ static VALUE stacktrace(int argc, VALUE* argv, rb_thread_t *th)
   cfp += 1;
   limit_cfp -= 2;
 
-  if (finish < 0) {
-    finish += 1;
-//    finish = stack_size + finish;
+  if (finish > 0) {
+    finish--;
   }
 
   if (start < 0 || finish < 0) {
@@ -60,13 +59,13 @@ static VALUE stacktrace(int argc, VALUE* argv, rb_thread_t *th)
     }
   }
 
-   //rb_warn("test %i %i cfp: %i lcfp %i ss %i", start, finish, cfp, limit_cfp, stack_size);
+    // rb_warn("test %i %i cfp: %i lcfp %i ss %i", start, finish, cfp, limit_cfp, stack_size);
 
   while (cfp < limit_cfp) {
     VALUE hash = 0; 
 	  if (cfp->iseq != 0 && cfp->pc != 0) {
         if (start-- > 0) {cfp++; continue;}
-        if (finish-- == 0) break;
+        if (finish-- < 0) break;
         iseq = cfp->iseq;
         hash = rb_hash_new();
         if (iseq->defined_method_id) {
@@ -80,7 +79,7 @@ static VALUE stacktrace(int argc, VALUE* argv, rb_thread_t *th)
 	  }
     else if (RUBYVM_CFUNC_FRAME_P(cfp)) {
          if (start-- > 0) {cfp++; continue;}
-         if (finish-- == 0) break;
+         if (finish-- < 0) break;
          extern VALUE ruby_engine_name;
          if (NIL_P(file)) file = ruby_engine_name;
          if (cfp->me->def)
