@@ -22,6 +22,7 @@ static VALUE stacktrace(int argc, VALUE* argv, rb_thread_t *th)
   int line = 0;
   rb_iseq_t *iseq = 0;
   ID id;
+  VALUE frame;
   
   if (argc > 0) {
     start = NUM2INT(argv[0]);
@@ -67,15 +68,16 @@ static VALUE stacktrace(int argc, VALUE* argv, rb_thread_t *th)
         if (start-- > 0) {cfp++; continue;}
         if (finish-- < 0) break;
         iseq = cfp->iseq;
-        hash = rb_hash_new();
+        // frame = rb_class_new_instance(0, Qnil, 
+        frame = rb_eval_string("StackFrame.new");
         if (iseq->defined_method_id) {
-          rb_hash_aset(hash, ID2SYM(rb_intern("klass")), iseq->klass); 
+          rb_iv_set(frame, "@klass", iseq->klass);
         }
-        rb_hash_aset(hash, ID2SYM(rb_intern("method")), iseq->name); 
-        rb_hash_aset(hash, ID2SYM(rb_intern("filename")), iseq->filename); 
+        rb_iv_set(frame, "@method", iseq->name);
+        rb_iv_set(frame, "@filename", iseq->filename);
         line = rb_vm_get_sourceline(cfp);
-        rb_hash_aset(hash, ID2SYM(rb_intern("linenumber")), INT2FIX(line)); 
-        rb_ary_push(ary,hash);
+        rb_iv_set(frame, "@line_number", INT2FIX(line));
+        rb_ary_push(ary, frame);
 	  }
     else if (RUBYVM_CFUNC_FRAME_P(cfp)) {
          if (start-- > 0) {cfp++; continue;}
@@ -87,11 +89,10 @@ static VALUE stacktrace(int argc, VALUE* argv, rb_thread_t *th)
          else
            id = cfp->me->called_id;
          if (id != ID_ALLOCATOR) {
-
-            hash = rb_hash_new();
-            rb_hash_aset(hash, ID2SYM(rb_intern("klass")), cfp->me->klass); 
-            rb_hash_aset(hash, ID2SYM(rb_intern("method")), rb_id2str(id)); 
-            rb_ary_push(ary,hash);
+            frame = rb_eval_string("StackFrame.new");
+            rb_iv_set(frame, "@klass", cfp->me->klass);
+            rb_iv_set(frame, "@method", rb_id2str(id)); 
+            rb_ary_push(ary,frame);
            
          } 
     }

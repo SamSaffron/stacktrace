@@ -21,31 +21,31 @@ class TestStacktrace < Test::Unit::TestCase
 
   def test_singleton_stacktrace
     frame = TestStacktrace.test_singleton[0]
-    assert_equal frame[:klass], TestStacktrace.metaclass 
-    assert_equal frame[:method], "test_singleton" 
+    assert_equal frame.klass, TestStacktrace.metaclass 
+    assert_equal frame.method, "test_singleton" 
   end
   
   def test_thread_stacktrace
     frame = Thread.current.stacktrace[0]
-    assert_equal frame[:klass], TestStacktrace
-    assert_equal frame[:method], "test_thread_stacktrace"
+    assert_equal frame.klass, TestStacktrace
+    assert_equal frame.method, "test_thread_stacktrace"
   end
 
   def test_c_func
     frame = nil
     [1].map{frame = stacktrace[1]}
     
-    assert_equal frame[:method], "map"
-    assert_equal frame[:klass], Array
+    assert_equal frame.method, "map"
+    assert_equal frame.klass, Array
   end
 
   def test_filename
-    name = stacktrace[0][:filename]
+    name = stacktrace[0].filename
     assert_equal name, __FILE__
   end
 
   def test_linenumber 
-    line = stacktrace[0][:linenumber]
+    line = stacktrace[0].line_number
     assert_equal __LINE__ - 1, line
   end
 
@@ -58,7 +58,7 @@ class TestStacktrace < Test::Unit::TestCase
   end
 
   def test_invalid_range
-    #assert_equal stacktrace(1,-10000), []
+    assert_equal stacktrace(1,-10000), []
   end
 
   def test_negative_start
