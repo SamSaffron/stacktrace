@@ -10,6 +10,12 @@ require 'rake/extensiontask'
 # Hoe.plugin :racc
 # Hoe.plugin :rcov
 # Hoe.plugin :rubyforge
+VERSION = "1.0.0"
+spec = Gem::Specification.new do |s|
+  s.name = "stacktrace"
+  s.platform = Gem::Platform::RUBY
+  s.extensions = FileList["ext/**/extconf.rb"]
+end
 
 Hoe.spec 'stacktrace' do
   developer('Sam Saffron', 'sam.saffron@gmail.com')
@@ -24,5 +30,10 @@ Hoe.spec 'stacktrace' do
 end
 
 Rake::Task[:test].prerequisites << :compile
+
+
+
+
+
 
 # vim: syntax=ruby

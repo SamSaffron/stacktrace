@@ -5,4 +5,6 @@ README.txt
 Rakefile
 bin/stacktrace
 lib/stacktrace.rb
+lib/stackframe.rb
 test/test_stacktrace.rb
+ext/stacktrace/stacktrace.c

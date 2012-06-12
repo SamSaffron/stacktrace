@@ -3,3 +3,4 @@
 tmp/*
 lib/stacktrace/stacktrace.so
 stacktrace.bundle
+pkg/*
