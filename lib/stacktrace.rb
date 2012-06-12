@@ -1,2 +1,2 @@
-require 'stacktrace/stacktrace'
 require 'stackframe'
+require 'stacktrace/stacktrace'

@@ -72,14 +72,23 @@ class TestStacktrace < Test::Unit::TestCase
     assert_equal caller_length, stack_length
   end
 
-  private 
+  def test_filter_stack
+    frame = stacktrace(0, 0, StackFrame::Flags::METHOD)[0]
 
-  # stacktrace is MUCH faster
-  #def test_demo_bench
-  #  Benchmark.bm(7) do |b|
-  #    b.report("caller: ") { 100000.times { caller } }
-  #    b.report("stacktrace: ") { 100000.times { stacktrace } }
-  #  end
-  #end
+    assert_equal nil, frame.klass
+    assert_equal nil, frame.line_number
+    assert_equal nil, frame.filename
+  end
+
+
+  #stacktrace has similar perf
+  def test_demo_bench
+    return
+    Benchmark.bm(7) do |b|
+      b.report("caller: ") { 100000.times { caller } }
+      b.report("stacktrace: ") { 100000.times { stacktrace } }
+      b.report("stacktrace: ") { 100000.times { stacktrace(0,-1, StackFrame::Flags::METHOD | StackFrame::Flags::KLASS) } }
+    end
+  end
 
 end
