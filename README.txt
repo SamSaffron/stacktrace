@@ -15,7 +15,13 @@ I think it only works on 1.9.3 for now, need to test
 Thread.current.stacktrace 
 stacktrace 
 
-In a simple bench it is about 3 times faster than caller due to reduced information it is reporting. 
+stacktrace accepts 3 params: first is start, second is finish, last is flags
+
+so: 
+
+stacktrace(0,0) returns only 1 frame (the frame you are in) 
+stacktrace(-1,-1) returns the earliest frame 
+stacktrace(0,-1,StackFrame::Flags::METHOD | StackFrame::Flags::KLASS) will return only class and method info
 
 == REQUIREMENTS:
 
